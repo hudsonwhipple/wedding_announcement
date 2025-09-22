@@ -177,9 +177,6 @@ function App() {
         setIsSubmitting(false);
         return;
       }
-
-      // Set up error detection
-      let submissionSuccess = false;
       
       try {
         // Create form in popup - don't double encode the values
@@ -209,22 +206,19 @@ function App() {
         setTimeout(() => {
           try {
             if (popup && !popup.closed) {
-              submissionSuccess = popup.submissionSuccess;
               if (popup.submissionError) {
                 console.error('Form submission error in popup:', popup.submissionError);
               }
             }
           } catch (e) {
             // Cross-origin access might be blocked, assume success
-            submissionSuccess = true;
+            console.log('Cross-origin access blocked, assuming success');
           }
           
           if (popup && !popup.closed) {
             popup.close();
           }
         }, 2000);
-
-        submissionSuccess = true; // Assume success if no errors thrown
 
       } catch (popupError) {
         console.error('Error writing to popup:', popupError);
