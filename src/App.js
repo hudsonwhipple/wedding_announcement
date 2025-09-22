@@ -17,12 +17,76 @@ function App() {
   const [submitMessage, setSubmitMessage] = useState('');
   const [bubbles, setBubbles] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [language, setLanguage] = useState('english');
 
-  const dateOptions = [
-    'Main Reception in Arizona, December 30th',
-    'Open House in Dallas, January 17th',
-    'Open House in Austin, January 24th'
-  ];
+  const translations = {
+    english: {
+      weddingAnnouncements: "Wedding Announcements",
+      names: "Sara and Hudson",
+      subtitle: "We are so excited for December 30th! Please let us know if you can be there to celebrate with us in Arizona or Texas. You mean the world to us!",
+      fullName: "Full Name",
+      fullNamePlaceholder: "Enter your full name",
+      addressLine1: "Address Line 1",
+      addressLine1Placeholder: "Street address, P.O. box, company name",
+      addressLine2: "Address Line 2 (Optional)",
+      addressLine2Placeholder: "Apartment, suite, unit, building, floor, etc.",
+      city: "City",
+      cityPlaceholder: "City",
+      state: "State",
+      statePlaceholder: "State",
+      zipCode: "Zip Code",
+      zipCodePlaceholder: "Zip Code",
+      country: "Country",
+      countryPlaceholder: "Country",
+      phoneNumber: "Phone Number",
+      phoneNumberPlaceholder: "Enter your phone number",
+      attendanceQuestion: "If you can come, which dates would you like to attend?",
+      submitButton: "Submit Information",
+      submitting: "Submitting...",
+      successMessage: "Thank you! Your information has been submitted successfully.",
+      errorMessage: "There was an error submitting your information. Please try again.",
+      loadingSubtitle: "Creating something beautiful...",
+      dateOptions: [
+        'Main Reception in Arizona, December 30th',
+        'Open House in Dallas, January 17th',
+        'Open House in Austin, January 24th'
+      ]
+    },
+    spanish: {
+      weddingAnnouncements: "Anuncios de Boda",
+      names: "Sara y Hudson",
+      subtitle: "¡Estamos muy emocionados por el 30 de diciembre! Déjanos saber si puedes estar ahí para celebrar con nosotros en Arizona o Texas. ¡Significas mucho para nosotros!",
+      fullName: "Nombre Completo",
+      fullNamePlaceholder: "Ingresa tu nombre completo",
+      addressLine1: "Dirección Línea 1",
+      addressLine1Placeholder: "Dirección, apartado postal, nombre de empresa",
+      addressLine2: "Dirección Línea 2 (Opcional)",
+      addressLine2Placeholder: "Apartamento, suite, unidad, edificio, piso, etc.",
+      city: "Ciudad",
+      cityPlaceholder: "Ciudad",
+      state: "Estado",
+      statePlaceholder: "Estado",
+      zipCode: "Código Postal",
+      zipCodePlaceholder: "Código Postal",
+      country: "País",
+      countryPlaceholder: "País",
+      phoneNumber: "Número de Teléfono",
+      phoneNumberPlaceholder: "Ingresa tu número de teléfono",
+      attendanceQuestion: "Si puedes venir, ¿qué fechas te gustaría asistir?",
+      submitButton: "Enviar Información",
+      submitting: "Enviando...",
+      successMessage: "¡Gracias! Tu información ha sido enviada exitosamente.",
+      errorMessage: "Hubo un error enviando tu información. Por favor intenta de nuevo.",
+      loadingSubtitle: "Creando algo hermoso...",
+      dateOptions: [
+        'Recepción Principal en Arizona, 30 de diciembre',
+        'Casa Abierta en Dallas, 17 de enero',
+        'Casa Abierta en Austin, 24 de enero'
+      ]
+    }
+  };
+
+  const currentTranslations = translations[language];
 
   useEffect(() => {
     // Generate random bubbles
@@ -140,7 +204,7 @@ function App() {
         </div>
         <div className="loading-text">
           <h1 className="loading-title">Sara & Hudson</h1>
-          <div className="loading-subtitle">Creating something beautiful...</div>
+          <div className="loading-subtitle">{currentTranslations.loadingSubtitle}</div>
           <div className="loading-dots">
             <span>.</span>
             <span>.</span>
@@ -194,13 +258,28 @@ function App() {
         </div>
         
         <div className="form-section">
-          <h1>Wedding Announcements</h1>
-          <h2 className="names-subtitle">Sara and Hudson</h2>
-          <p className="subtitle">We are so excited for December 30th! Please let us know if you can be there to celebrate with us in Arizona or Texas. You mean the world to us!</p>
+          <div className="language-toggle">
+            <button 
+              className={`language-btn ${language === 'english' ? 'active' : ''}`}
+              onClick={() => setLanguage('english')}
+            >
+              English
+            </button>
+            <button 
+              className={`language-btn ${language === 'spanish' ? 'active' : ''}`}
+              onClick={() => setLanguage('spanish')}
+            >
+              Español
+            </button>
+          </div>
+          
+          <h1>{currentTranslations.weddingAnnouncements}</h1>
+          <h2 className="names-subtitle">{currentTranslations.names}</h2>
+          <p className="subtitle">{currentTranslations.subtitle}</p>
           
           <form onSubmit={handleSubmit} className="contact-form">
             <div className="form-group">
-              <label htmlFor="name">Full Name</label>
+              <label htmlFor="name">{currentTranslations.fullName}</label>
               <input
                 type="text"
                 id="name"
@@ -208,12 +287,12 @@ function App() {
                 value={formData.name}
                 onChange={handleInputChange}
                 required
-                placeholder="Enter your full name"
+                placeholder={currentTranslations.fullNamePlaceholder}
               />
             </div>
 
             <div className="form-group">
-              <label htmlFor="addressLine1">Address Line 1</label>
+              <label htmlFor="addressLine1">{currentTranslations.addressLine1}</label>
               <input
                 type="text"
                 id="addressLine1"
@@ -221,25 +300,25 @@ function App() {
                 value={formData.addressLine1}
                 onChange={handleInputChange}
                 required
-                placeholder="Street address, P.O. box, company name"
+                placeholder={currentTranslations.addressLine1Placeholder}
               />
             </div>
 
             <div className="form-group">
-              <label htmlFor="addressLine2">Address Line 2 (Optional)</label>
+              <label htmlFor="addressLine2">{currentTranslations.addressLine2}</label>
               <input
                 type="text"
                 id="addressLine2"
                 name="addressLine2"
                 value={formData.addressLine2}
                 onChange={handleInputChange}
-                placeholder="Apartment, suite, unit, building, floor, etc."
+                placeholder={currentTranslations.addressLine2Placeholder}
               />
             </div>
 
             <div className="form-row">
               <div className="form-group">
-                <label htmlFor="city">City</label>
+                <label htmlFor="city">{currentTranslations.city}</label>
                 <input
                   type="text"
                   id="city"
@@ -247,12 +326,12 @@ function App() {
                   value={formData.city}
                   onChange={handleInputChange}
                   required
-                  placeholder="City"
+                  placeholder={currentTranslations.cityPlaceholder}
                 />
               </div>
 
               <div className="form-group">
-                <label htmlFor="state">State</label>
+                <label htmlFor="state">{currentTranslations.state}</label>
                 <input
                   type="text"
                   id="state"
@@ -260,14 +339,14 @@ function App() {
                   value={formData.state}
                   onChange={handleInputChange}
                   required
-                  placeholder="State"
+                  placeholder={currentTranslations.statePlaceholder}
                 />
               </div>
             </div>
 
             <div className="form-row">
               <div className="form-group">
-                <label htmlFor="zipCode">Zip Code</label>
+                <label htmlFor="zipCode">{currentTranslations.zipCode}</label>
                 <input
                   type="text"
                   id="zipCode"
@@ -275,12 +354,12 @@ function App() {
                   value={formData.zipCode}
                   onChange={handleInputChange}
                   required
-                  placeholder="Zip Code"
+                  placeholder={currentTranslations.zipCodePlaceholder}
                 />
               </div>
 
               <div className="form-group">
-                <label htmlFor="country">Country</label>
+                <label htmlFor="country">{currentTranslations.country}</label>
                 <input
                   type="text"
                   id="country"
@@ -288,13 +367,13 @@ function App() {
                   value={formData.country}
                   onChange={handleInputChange}
                   required
-                  placeholder="Country"
+                  placeholder={currentTranslations.countryPlaceholder}
                 />
               </div>
             </div>
 
             <div className="form-group">
-              <label htmlFor="phone">Phone Number</label>
+              <label htmlFor="phone">{currentTranslations.phoneNumber}</label>
               <input
                 type="tel"
                 id="phone"
@@ -302,14 +381,14 @@ function App() {
                 value={formData.phone}
                 onChange={handleInputChange}
                 required
-                placeholder="Enter your phone number"
+                placeholder={currentTranslations.phoneNumberPlaceholder}
               />
             </div>
 
             <div className="form-group checkbox-group">
-              <label>If you can come, which dates would you like to attend?</label>
+              <label>{currentTranslations.attendanceQuestion}</label>
               <div className="checkbox-options">
-                {dateOptions.map((date, index) => (
+                {currentTranslations.dateOptions.map((date, index) => (
                   <div key={index} className="checkbox-item">
                     <input
                       type="checkbox"
@@ -329,12 +408,12 @@ function App() {
               className="submit-btn"
               disabled={isSubmitting}
             >
-              {isSubmitting ? 'Submitting...' : 'Submit Information'}
+              {isSubmitting ? currentTranslations.submitting : currentTranslations.submitButton}
             </button>
 
             {submitMessage && (
               <div className={`message ${submitMessage.includes('error') ? 'error' : 'success'}`}>
-                {submitMessage}
+                {submitMessage.includes('error') ? currentTranslations.errorMessage : currentTranslations.successMessage}
               </div>
             )}
           </form>
