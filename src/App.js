@@ -176,17 +176,17 @@ function App() {
         <div className="photo-section">
           <div className="photo-gallery">
             <img 
-              src="/H+S-46 copy.jpg" 
+              src="/H+S-46-copy.jpg" 
               alt="Sara and Hudson" 
               className="main-photo"
             />
             <img 
-              src="/H+S-38 copy.jpg" 
+              src="/H+S-38-copy.jpg" 
               alt="Sara and Hudson" 
               className="main-photo secondary-photo"
             />
             <img 
-              src="/H+S-15 copy.jpg" 
+              src="/H+S-15-copy.jpg" 
               alt="Sara and Hudson" 
               className="main-photo secondary-photo"
             />
