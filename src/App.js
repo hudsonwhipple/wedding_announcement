@@ -45,6 +45,8 @@ function App() {
       submitting: "Submitting...",
       successMessage: "Thank you! Your information has been submitted successfully.",
       errorMessage: "There was an error submitting your information. Please try again.",
+      popupBlockedMessage: "Pop-ups are blocked. Please allow pop-ups for this site and try again, or ",
+      clickHereToSubmit: "click here to submit manually.",
       loadingSubtitle: "Creating something beautiful...",
       dateOptions: [
         'Main Reception in Arizona, December 30th',
@@ -77,6 +79,8 @@ function App() {
       submitting: "Enviando...",
       successMessage: "¡Gracias! Tu información ha sido enviada exitosamente.",
       errorMessage: "Hubo un error enviando tu información. Por favor intenta de nuevo.",
+      popupBlockedMessage: "Las ventanas emergentes están bloqueadas. Por favor permite ventanas emergentes para este sitio e intenta de nuevo, o ",
+      clickHereToSubmit: "haz clic aquí para enviar manualmente.",
       loadingSubtitle: "Creando algo hermoso...",
       dateOptions: [
         'Recepción Principal en Arizona, 30 de diciembre',
@@ -166,7 +170,18 @@ function App() {
       // Open popup window to submit form
       const popup = window.open('', 'formSubmit', 'width=1,height=1,left=-1000,top=-1000');
       
-      if (popup) {
+      // Check if popup was blocked
+      if (!popup || popup.closed || typeof popup.closed === 'undefined') {
+        console.error('Popup was blocked by browser');
+        setSubmitMessage('popup-blocked');
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Set up error detection
+      let submissionSuccess = false;
+      
+      try {
         // Create form in popup - don't double encode the values
         popup.document.write(`
           <html>
@@ -177,7 +192,12 @@ function App() {
                 ).join('')}
               </form>
               <script>
-                document.getElementById('googleForm').submit();
+                try {
+                  document.getElementById('googleForm').submit();
+                  window.submissionSuccess = true;
+                } catch (error) {
+                  window.submissionError = error;
+                }
                 setTimeout(() => window.close(), 1000);
               </script>
             </body>
@@ -185,12 +205,33 @@ function App() {
         `);
         popup.document.close();
 
-        // Close popup after a delay
+        // Check for submission success after a delay
         setTimeout(() => {
+          try {
+            if (popup && !popup.closed) {
+              submissionSuccess = popup.submissionSuccess;
+              if (popup.submissionError) {
+                console.error('Form submission error in popup:', popup.submissionError);
+              }
+            }
+          } catch (e) {
+            // Cross-origin access might be blocked, assume success
+            submissionSuccess = true;
+          }
+          
           if (popup && !popup.closed) {
             popup.close();
           }
         }, 2000);
+
+        submissionSuccess = true; // Assume success if no errors thrown
+
+      } catch (popupError) {
+        console.error('Error writing to popup:', popupError);
+        if (popup && !popup.closed) {
+          popup.close();
+        }
+        throw popupError;
       }
 
       console.log('Form submitted via popup method');
@@ -214,6 +255,38 @@ function App() {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleManualSubmit = () => {
+    const params = new URLSearchParams();
+    params.append('entry.1821525375', formData.name || '');
+    params.append('entry.315825374', formData.addressLine1 || '');
+    params.append('entry.1686944653', formData.addressLine2 || '');
+    params.append('entry.668287509', formData.city || '');
+    params.append('entry.1211848837', formData.state || '');
+    params.append('entry.1516230191', formData.zipCode || '');
+    params.append('entry.430568182', formData.country || '');
+    params.append('entry.809772035', formData.email || '');
+    
+    formData.attendanceDates.forEach(date => {
+      params.append('entry.187162441', date);
+    });
+
+    const GOOGLE_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSf7gGVe5yuncJfJuFfg6E_63PaO6EzxVGSlDfoX7BuXvhBotA/formResponse';
+    window.open(`${GOOGLE_FORM_URL}?${params.toString()}`, '_blank');
+    
+    setSubmitMessage(currentTranslations.successMessage);
+    setFormData({ 
+      name: '', 
+      addressLine1: '', 
+      addressLine2: '', 
+      city: '', 
+      state: '', 
+      zipCode: '', 
+      country: '', 
+      email: '', 
+      attendanceDates: [] 
+    });
   };
 
   if (isLoading) {
@@ -446,8 +519,29 @@ function App() {
             </button>
 
             {submitMessage && (
-              <div className={`message ${submitMessage.includes('error') ? 'error' : 'success'}`}>
-                {submitMessage.includes('error') ? currentTranslations.errorMessage : currentTranslations.successMessage}
+              <div className={`message ${submitMessage.includes('error') || submitMessage === 'popup-blocked' ? 'error' : 'success'}`}>
+                {submitMessage === 'popup-blocked' ? (
+                  <span>
+                    {currentTranslations.popupBlockedMessage}
+                    <button 
+                      onClick={handleManualSubmit}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        color: '#667eea',
+                        textDecoration: 'underline',
+                        cursor: 'pointer',
+                        font: 'inherit'
+                      }}
+                    >
+                      {currentTranslations.clickHereToSubmit}
+                    </button>
+                  </span>
+                ) : submitMessage.includes('error') ? (
+                  currentTranslations.errorMessage
+                ) : (
+                  currentTranslations.successMessage
+                )}
               </div>
             )}
           </form>
