@@ -10,7 +10,7 @@ function App() {
     state: '',
     zipCode: '',
     country: '',
-    phone: '',
+    email: '',
     attendanceDates: []
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -38,8 +38,8 @@ function App() {
       zipCodePlaceholder: "Zip Code",
       country: "Country",
       countryPlaceholder: "Country",
-      phoneNumber: "Phone Number",
-      phoneNumberPlaceholder: "Enter your phone number",
+      emailAddress: "Email Address",
+      emailPlaceholder: "Enter your email address",
       attendanceQuestion: "If you can come, which dates would you like to attend?",
       submitButton: "Submit Information",
       submitting: "Submitting...",
@@ -70,8 +70,8 @@ function App() {
       zipCodePlaceholder: "Código Postal",
       country: "País",
       countryPlaceholder: "País",
-      phoneNumber: "Número de Teléfono",
-      phoneNumberPlaceholder: "Ingresa tu número de teléfono",
+      emailAddress: "Correo Electrónico",
+      emailPlaceholder: "Ingresa tu correo electrónico",
       attendanceQuestion: "Si puedes venir, ¿qué fechas te gustaría asistir?",
       submitButton: "Enviar Información",
       submitting: "Enviando...",
@@ -138,32 +138,64 @@ function App() {
     setIsSubmitting(true);
     setSubmitMessage('');
 
+    // Debug: Log what we're about to send
+    console.log('Form data being submitted:', formData);
+
+    // Define the Google Form URL at the top of the function
+    const GOOGLE_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSf7gGVe5yuncJfJuFfg6E_63PaO6EzxVGSlDfoX7BuXvhBotA/formResponse';
+
     try {
-      // Your actual Google Form URL
-      const GOOGLE_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSf7gGVe5yuncJfJuFfg6E_63PaO6EzxVGSlDfoX7BuXvhBotA/formResponse';
+      // Create URL with all form data
+      const params = new URLSearchParams();
+      params.append('entry.1821525375', formData.name || '');
+      params.append('entry.315825374', formData.addressLine1 || '');
+      params.append('entry.1686944653', formData.addressLine2 || '');
+      params.append('entry.668287509', formData.city || '');
+      params.append('entry.1211848837', formData.state || '');
+      params.append('entry.1516230191', formData.zipCode || '');
+      params.append('entry.430568182', formData.country || '');
+      params.append('entry.809772035', formData.email || '');
       
-      const formDataToSend = new FormData();
-      // Your actual entry IDs
-      formDataToSend.append('entry.1821525375', formData.name);
-      formDataToSend.append('entry.315825374', formData.addressLine1);
-      formDataToSend.append('entry.1686944653', formData.addressLine2);
-      formDataToSend.append('entry.668287509', formData.city);
-      formDataToSend.append('entry.1211848837', formData.state);
-      formDataToSend.append('entry.1516230191', formData.zipCode);
-      formDataToSend.append('entry.430568182', formData.country);
-      
-      // Handle checkbox entries
+      // Add attendance dates
       formData.attendanceDates.forEach(date => {
-        formDataToSend.append('entry.187162441', date);
+        params.append('entry.187162441', date);
       });
 
-      await fetch(GOOGLE_FORM_URL, {
-        method: 'POST',
-        body: formDataToSend,
-        mode: 'no-cors'
-      });
+      console.log('Form data params:', params.toString());
 
-      setSubmitMessage('Thank you! Your information has been submitted successfully.');
+      // Open popup window to submit form
+      const popup = window.open('', 'formSubmit', 'width=1,height=1,left=-1000,top=-1000');
+      
+      if (popup) {
+        // Create form in popup - don't double encode the values
+        popup.document.write(`
+          <html>
+            <body>
+              <form id="googleForm" method="POST" action="${GOOGLE_FORM_URL}">
+                ${Array.from(params.entries()).map(([key, value]) => 
+                  `<input type="hidden" name="${key}" value="${value}">`
+                ).join('')}
+              </form>
+              <script>
+                document.getElementById('googleForm').submit();
+                setTimeout(() => window.close(), 1000);
+              </script>
+            </body>
+          </html>
+        `);
+        popup.document.close();
+
+        // Close popup after a delay
+        setTimeout(() => {
+          if (popup && !popup.closed) {
+            popup.close();
+          }
+        }, 2000);
+      }
+
+      console.log('Form submitted via popup method');
+
+      setSubmitMessage(currentTranslations.successMessage);
       setFormData({ 
         name: '', 
         addressLine1: '', 
@@ -172,11 +204,13 @@ function App() {
         state: '', 
         zipCode: '', 
         country: '', 
-        phone: '', 
+        email: '', 
         attendanceDates: [] 
       });
+
     } catch (error) {
-      setSubmitMessage('There was an error submitting your information. Please try again.');
+      console.error('Form submission error:', error);
+      setSubmitMessage(currentTranslations.errorMessage);
     } finally {
       setIsSubmitting(false);
     }
@@ -373,15 +407,15 @@ function App() {
             </div>
 
             <div className="form-group">
-              <label htmlFor="phone">{currentTranslations.phoneNumber}</label>
+              <label htmlFor="email">{currentTranslations.emailAddress}</label>
               <input
-                type="tel"
-                id="phone"
-                name="phone"
-                value={formData.phone}
+                type="email"
+                id="email"
+                name="email"
+                value={formData.email}
                 onChange={handleInputChange}
                 required
-                placeholder={currentTranslations.phoneNumberPlaceholder}
+                placeholder={currentTranslations.emailPlaceholder}
               />
             </div>
 
