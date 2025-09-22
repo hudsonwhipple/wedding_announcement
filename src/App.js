@@ -21,9 +21,9 @@ function App() {
 
   const translations = {
     english: {
-      weddingAnnouncements: "Wedding Announcements",
+      weddingAnnouncements: "We are getting Married!",
       names: "Sara and Hudson",
-      subtitle: "We are so excited for December 30th! Please let us know if you can be there to celebrate with us in Arizona or Texas. You mean the world to us!",
+      subtitle: "Please fill out the form if you would like an announcement and let us know if you are able to celebrate in person with us at our reception in Phoenix or our openhouse in Texas!",
       fullName: "Full Name",
       fullNamePlaceholder: "Enter your full name",
       addressLine1: "Address Line 1",
@@ -49,15 +49,15 @@ function App() {
       clickHereToSubmit: "click here to submit manually.",
       loadingSubtitle: "Creating something beautiful...",
       dateOptions: [
-        'Main Reception in Arizona, December 30th',
-        'Open House in Dallas, January 17th',
-        'Open House in Austin, January 24th'
+        'Main Reception in Arizona: Tuesday, December 30th',
+        'Open House in Dallas: Saturday, January 17th',
+        'Open House in Austin: Saturday, January 24th'
       ]
     },
     spanish: {
-      weddingAnnouncements: "Anuncios de Boda",
+      weddingAnnouncements: "¡Nos vamos a casar!",
       names: "Sara y Hudson",
-      subtitle: "¡Estamos muy emocionados por el 30 de diciembre! Déjanos saber si puedes estar ahí para celebrar con nosotros en Arizona o Texas. ¡Significas mucho para nosotros!",
+      subtitle: "¡Por favor llena el formulario si te gustaría recibir un anuncio y déjanos saber si puedes celebrar en persona con nosotros en nuestra recepción en Phoenix o en nuestra casa abierta en Texas!",
       fullName: "Nombre Completo",
       fullNamePlaceholder: "Ingresa tu nombre completo",
       addressLine1: "Dirección Línea 1",
@@ -83,9 +83,9 @@ function App() {
       clickHereToSubmit: "haz clic aquí para enviar manualmente.",
       loadingSubtitle: "Creando algo hermoso...",
       dateOptions: [
-        'Recepción Principal en Arizona, 30 de diciembre',
-        'Casa Abierta en Dallas, 17 de enero',
-        'Casa Abierta en Austin, 24 de enero'
+        'Recepción Principal en Arizona: martes, el 30 de diciembre',
+        'Casa Abierta en Dallas: sábado, el 17 de enero',
+        'Casa Abierta en Austin: sábado, el 24 de enero'
       ]
     }
   };
