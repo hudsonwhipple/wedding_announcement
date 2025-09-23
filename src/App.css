@@ -984,29 +984,31 @@ textarea {
     width: 85%;
     max-width: 300px;
     animation: floating 6s ease-in-out infinite, mobileSlideIn 0.8s ease-out;
+    object-position: center 80%;
   }
   
   .main-photo:nth-child(1) {
     animation-delay: 0s, 0.2s;
+    object-position: center 75%;
   }
   
   .secondary-photo {
     max-height: 220px;
     width: 85%;
     max-width: 300px;
-    object-position: center 70%;
+    object-position: center 85%;
   }
   
   .secondary-photo:nth-child(2) {
     animation: floating 8s ease-in-out infinite, mobileSlideIn 0.8s ease-out;
     animation-delay: 2s, 0.4s;
-    object-position: center 70%;
+    object-position: center 85%;
   }
   
   .secondary-photo:nth-child(3) {
     animation: floating 7s ease-in-out infinite reverse, mobileSlideIn 0.8s ease-out;
     animation-delay: 4s, 0.6s;
-    object-position: center 60%;
+    object-position: center 80%;
   }
   
   @keyframes mobileSlideIn {
@@ -1133,10 +1135,12 @@ textarea {
     max-width: 280px;
     border-radius: 12px;
     animation: floating 6s ease-in-out infinite, mobilePopIn 0.9s ease-out;
+    object-position: center 85%;
   }
   
   .main-photo:nth-child(1) {
     animation-delay: 0s, 0.3s;
+    object-position: center 80%;
   }
   
   .secondary-photo {
@@ -1144,19 +1148,19 @@ textarea {
     width: 90%;
     max-width: 280px;
     border-radius: 12px;
-    object-position: center 70%;
+    object-position: center 90%;
   }
   
   .secondary-photo:nth-child(2) {
     animation: floating 8s ease-in-out infinite, mobilePopIn 0.9s ease-out;
     animation-delay: 2s, 0.5s;
-    object-position: center 70%;
+    object-position: center 90%;
   }
   
   .secondary-photo:nth-child(3) {
     animation: floating 7s ease-in-out infinite reverse, mobilePopIn 0.9s ease-out;
     animation-delay: 4s, 0.7s;
-    object-position: center 60%;
+    object-position: center 85%;
   }
   
   @keyframes mobilePopIn {
@@ -1284,13 +1288,14 @@ textarea {
     max-height: 180px;
     width: 95%;
     max-width: 260px;
+    object-position: center 90%;
   }
   
   .secondary-photo {
     max-height: 180px;
     width: 95%;
     max-width: 260px;
-    object-position: center 70%;
+    object-position: center 95%;
   }
   
   .wedding-date {
