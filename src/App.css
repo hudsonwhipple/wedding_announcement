@@ -1002,7 +1002,7 @@ textarea {
   .secondary-photo:nth-child(2) {
     animation: floating 8s ease-in-out infinite, mobileSlideIn 0.8s ease-out;
     animation-delay: 2s, 0.4s;
-    object-position: center 35%;
+    object-position: center 60%;
   }
   
   .secondary-photo:nth-child(3) {
@@ -1154,7 +1154,7 @@ textarea {
   .secondary-photo:nth-child(2) {
     animation: floating 8s ease-in-out infinite, mobilePopIn 0.9s ease-out;
     animation-delay: 2s, 0.5s;
-    object-position: center 30%;
+    object-position: center 60%;
   }
   
   .secondary-photo:nth-child(3) {
@@ -1299,7 +1299,7 @@ textarea {
   }
   
   .secondary-photo:nth-child(2) {
-    object-position: center 25%;
+    object-position: center 50%;
   }
   
   .wedding-date {
