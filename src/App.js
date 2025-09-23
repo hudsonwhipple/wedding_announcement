@@ -507,14 +507,6 @@ function App() {
               </div>
             </div>
 
-            <button 
-              type="submit" 
-              className="submit-btn"
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? currentTranslations.submitting : currentTranslations.submitButton}
-            </button>
-
             {submitMessage && (
               <div className={`message ${submitMessage.includes('error') || submitMessage === 'popup-blocked' ? 'error' : 'success'}`}>
                 {submitMessage === 'popup-blocked' ? (
@@ -541,6 +533,14 @@ function App() {
                 )}
               </div>
             )}
+
+            <button 
+              type="submit" 
+              className="submit-btn"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? currentTranslations.submitting : currentTranslations.submitButton}
+            </button>
           </form>
         </div>
       </div>
