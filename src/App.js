@@ -22,8 +22,9 @@ function App() {
   const translations = {
     english: {
       weddingAnnouncements: "We are getting Married!",
-      names: "Sara and Hudson",
+      names: "Sara & Hudson",
       subtitle: "Please fill out the form if you would like an announcement and let us know if you are able to celebrate in person with us at our reception in Phoenix or our openhouse in Texas!",
+      weddingDate: "December 30th, 2025",
       fullName: "Full Name",
       fullNamePlaceholder: "Enter your full name",
       addressLine1: "Address Line 1",
@@ -58,6 +59,7 @@ function App() {
       weddingAnnouncements: "¡Nos vamos a casar!",
       names: "Sara y Hudson",
       subtitle: "¡Por favor llena el formulario si te gustaría recibir un anuncio y déjanos saber si puedes celebrar en persona con nosotros en nuestra recepción en Phoenix o en nuestra casa abierta en Texas!",
+      weddingDate: "30 de diciembre, 2025",
       fullName: "Nombre Completo",
       fullNamePlaceholder: "Ingresa tu nombre completo",
       addressLine1: "Dirección Línea 1",
@@ -375,8 +377,9 @@ function App() {
           </div>
           
           <h1>{currentTranslations.weddingAnnouncements}</h1>
-          <h2 className="names-subtitle">{currentTranslations.names}</h2>
+          <div className="wedding-date">{currentTranslations.weddingDate}</div>
           <p className="subtitle">{currentTranslations.subtitle}</p>
+          <h2 className="names-subtitle">{currentTranslations.names}</h2>
           
           <form onSubmit={handleSubmit} className="contact-form">
             <div className="form-group">
