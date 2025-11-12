@@ -18,6 +18,11 @@ function App() {
   const [bubbles, setBubbles] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [language, setLanguage] = useState('english');
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+  const [touchStart, setTouchStart] = useState(null);
+  const [touchEnd, setTouchEnd] = useState(null);
+  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
 
   const translations = {
     english: {
@@ -44,6 +49,7 @@ function App() {
       attendanceQuestion: "If you can come, which dates would you like to attend?",
       submitButton: "Submit Information",
       submitting: "Submitting...",
+      registryButton: "Wedding Registry",
       successMessage: "Thank you! Your information has been submitted successfully.",
       errorMessage: "There was an error submitting your information. Please try again.",
       popupBlockedMessage: "Pop-ups are blocked. Please allow pop-ups for this site and try again, or ",
@@ -51,8 +57,8 @@ function App() {
       loadingSubtitle: "Creating something beautiful...",
       dateOptions: [
         'Main Reception in Arizona: Tuesday, December 30th',
-        'Open House in Dallas: Saturday, January 17th',
-        'Open House in Austin: Saturday, January 24th'
+        'Open House in Austin: Saturday, January 17th',
+        'Open House in Dallas: Saturday, January 24th'
       ]
     },
     spanish: {
@@ -79,6 +85,7 @@ function App() {
       attendanceQuestion: "Si puedes venir, ¿qué fechas te gustaría asistir?",
       submitButton: "Enviar Información",
       submitting: "Enviando...",
+      registryButton: "Registro de Regalos",
       successMessage: "¡Gracias! Tu información ha sido enviada exitosamente.",
       errorMessage: "Hubo un error enviando tu información. Por favor intenta de nuevo.",
       popupBlockedMessage: "Las ventanas emergentes están bloqueadas. Por favor permite ventanas emergentes para este sitio e intenta de nuevo, o ",
@@ -86,15 +93,29 @@ function App() {
       loadingSubtitle: "Creando algo hermoso...",
       dateOptions: [
         'Recepción Principal en Arizona: martes, el 30 de diciembre',
-        'Casa Abierta en Dallas: sábado, el 17 de enero',
-        'Casa Abierta en Austin: sábado, el 24 de enero'
+        'Casa Abierta en Austin: sábado, el 17 de enero',
+        'Casa Abierta en Dallas: sábado, el 24 de enero'
       ]
     }
   };
 
   const currentTranslations = translations[language];
 
+  const images = [
+    "/H+S-46-copy.jpg",
+    "/H+S-38-copy.jpg",
+    "/H+S-15-copy.jpg"
+  ];
+
   useEffect(() => {
+    // Check if mobile
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+
     // Generate random bubbles
     const generateBubbles = () => {
       const newBubbles = [];
@@ -118,8 +139,24 @@ function App() {
       setIsLoading(false);
     }, 4000); // 4 seconds loading animation
 
-    return () => clearTimeout(loadingTimer);
+    return () => {
+      clearTimeout(loadingTimer);
+      window.removeEventListener('resize', checkMobile);
+    };
   }, []);
+
+  // Auto-play carousel on mobile
+  useEffect(() => {
+    if (isMobile && isAutoPlaying) {
+      const interval = setInterval(() => {
+        setCurrentImageIndex((prevIndex) => 
+          prevIndex === images.length - 1 ? 0 : prevIndex + 1
+        );
+      }, 4000); // Change image every 4 seconds
+
+      return () => clearInterval(interval);
+    }
+  }, [isMobile, isAutoPlaying, images.length]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -127,6 +164,53 @@ function App() {
       ...prev,
       [name]: value
     }));
+  };
+
+  const nextImage = () => {
+    setIsAutoPlaying(false); // Pause auto-play when user interacts
+    setCurrentImageIndex((prevIndex) => 
+      prevIndex === images.length - 1 ? 0 : prevIndex + 1
+    );
+  };
+
+  const prevImage = () => {
+    setIsAutoPlaying(false); // Pause auto-play when user interacts
+    setCurrentImageIndex((prevIndex) => 
+      prevIndex === 0 ? images.length - 1 : prevIndex - 1
+    );
+  };
+
+  const goToImage = (index) => {
+    setIsAutoPlaying(false); // Pause auto-play when user interacts
+    setCurrentImageIndex(index);
+  };
+
+  // Minimum swipe distance (in px)
+  const minSwipeDistance = 50;
+
+  const onTouchStart = (e) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const onTouchMove = (e) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    
+    setIsAutoPlaying(false); // Pause auto-play when user swipes
+    
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+    
+    if (isLeftSwipe) {
+      nextImage();
+    } else if (isRightSwipe) {
+      prevImage();
+    }
   };
 
   const handleCheckboxChange = (e) => {
@@ -341,23 +425,65 @@ function App() {
 
       <div className="container">
         <div className="photo-section">
-          <div className="photo-gallery">
-            <img 
-              src="/H+S-46-copy.jpg" 
-              alt="Sara and Hudson" 
-              className="main-photo"
-            />
-            <img 
-              src="/H+S-38-copy.jpg" 
-              alt="Sara and Hudson" 
-              className="main-photo secondary-photo"
-            />
-            <img 
-              src="/H+S-15-copy.jpg" 
-              alt="Sara and Hudson" 
-              className="main-photo secondary-photo"
-            />
-          </div>
+          {isMobile ? (
+            <div 
+              className="carousel-container"
+              onTouchStart={onTouchStart}
+              onTouchMove={onTouchMove}
+              onTouchEnd={onTouchEnd}
+            >
+              <div className="carousel-wrapper">
+                <div 
+                  className="carousel-track"
+                  style={{ transform: `translateX(-${currentImageIndex * 100}%)` }}
+                >
+                  {images.map((img, index) => (
+                    <div key={index} className="carousel-slide">
+                      <img 
+                        src={img} 
+                        alt={`Sara and Hudson ${index + 1}`} 
+                        className="carousel-image"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <button className="carousel-btn prev" onClick={prevImage} aria-label="Previous image">
+                &#8249;
+              </button>
+              <button className="carousel-btn next" onClick={nextImage} aria-label="Next image">
+                &#8250;
+              </button>
+              <div className="carousel-dots">
+                {images.map((_, index) => (
+                  <button
+                    key={index}
+                    className={`dot ${index === currentImageIndex ? 'active' : ''}`}
+                    onClick={() => goToImage(index)}
+                    aria-label={`Go to image ${index + 1}`}
+                  />
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="photo-gallery">
+              <img 
+                src="/H+S-46-copy.jpg" 
+                alt="Sara and Hudson" 
+                className="main-photo"
+              />
+              <img 
+                src="/H+S-38-copy.jpg" 
+                alt="Sara and Hudson" 
+                className="main-photo secondary-photo"
+              />
+              <img 
+                src="/H+S-15-copy.jpg" 
+                alt="Sara and Hudson" 
+                className="main-photo secondary-photo"
+              />
+            </div>
+          )}
         </div>
         
         <div className="form-section">
@@ -541,6 +667,31 @@ function App() {
             >
               {isSubmitting ? currentTranslations.submitting : currentTranslations.submitButton}
             </button>
+
+            <a 
+              href="https://www.theknot.com/us/hudson-whipple-and-sara-lopez-frol-dec-2025/registry"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="registry-btn"
+            >
+              {currentTranslations.registryButton}
+              <svg 
+                className="external-link-icon" 
+                xmlns="http://www.w3.org/2000/svg" 
+                width="18" 
+                height="18" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor" 
+                strokeWidth="2" 
+                strokeLinecap="round" 
+                strokeLinejoin="round"
+              >
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                <polyline points="15 3 21 3 21 9"></polyline>
+                <line x1="10" y1="14" x2="21" y2="3"></line>
+              </svg>
+            </a>
           </form>
         </div>
       </div>
